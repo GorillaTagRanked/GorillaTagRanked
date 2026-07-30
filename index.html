@@ -1,24 +1,25 @@
+<!-- Ranked Codes Grey Edition -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#07100d">
+  <meta name="theme-color" content="#0d0f10">
   <title>Ranked Codes — Live Gorilla Tag Lobby</title>
   <style>
     :root {
-      --bg: #07100d;
-      --rail: #08120e;
-      --panel: #111a14;
-      --panel-2: #0c1510;
-      --border: #28362c;
-      --border-strong: #435547;
-      --text: #edf4ec;
-      --muted: #85998b;
-      --faint: #5d6e62;
-      --green: #b7ff3c;
-      --green-2: #75e66a;
-      --yellow: #f4c95d;
+      --bg: #0d0f10;
+      --rail: #111315;
+      --panel: #1a1d20;
+      --panel-2: #14171a;
+      --border: #34393f;
+      --border-strong: #555c63;
+      --text: #f1f3f5;
+      --muted: #9aa1a8;
+      --faint: #6d747c;
+      --accent: #c5cbd1;
+      --accent-2: #aeb5bc;
+      --warning: #b9bec4;
       --mouse-x: 72%;
       --mouse-y: 18%;
     }
@@ -29,7 +30,7 @@
       min-height: 100vh;
       margin: 0;
       background:
-        radial-gradient(circle at 84% 8%, rgba(54, 104, 66, .20), transparent 28%),
+        radial-gradient(circle at 84% 8%, rgba(116, 122, 129, .18), transparent 28%),
         linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,.01) 1px, transparent 1px),
         var(--bg);
@@ -43,8 +44,8 @@
       inset: -30%;
       z-index: 0;
       background:
-        radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(183,255,60,.09), transparent 20%),
-        radial-gradient(circle at 18% 82%, rgba(117,230,106,.055), transparent 24%);
+        radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(197,203,209,.075), transparent 20%),
+        radial-gradient(circle at 18% 82%, rgba(150,157,164,.045), transparent 24%);
       content: "";
       filter: blur(22px);
       pointer-events: none;
@@ -55,7 +56,7 @@
       inset: -100% 0 0;
       z-index: 2;
       height: 45%;
-      background: linear-gradient(180deg, transparent, rgba(183,255,60,.018), transparent);
+      background: linear-gradient(180deg, transparent, rgba(197,203,209,.018), transparent);
       content: "";
       pointer-events: none;
       animation: page-scan 9s linear infinite;
@@ -64,7 +65,7 @@
     button, input { font: inherit; }
     button { color: inherit; }
     button:focus-visible, input:focus-visible, tr:focus-visible {
-      outline: 2px solid var(--green);
+      outline: 2px solid var(--accent);
       outline-offset: 2px;
     }
 
@@ -78,14 +79,14 @@
       justify-content: space-between;
       overflow: hidden;
       border-right: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(8,18,14,.96), rgba(5,12,9,.99));
+      background: linear-gradient(180deg, rgba(17,19,21,.97), rgba(10,12,14,.99));
       padding: 30px 27px 26px;
     }
     .rail::after {
       position: absolute;
       inset: 0 0 auto;
       height: 120px;
-      background: linear-gradient(180deg, transparent, rgba(183,255,60,.045), transparent);
+      background: linear-gradient(180deg, transparent, rgba(197,203,209,.04), transparent);
       content: "";
       pointer-events: none;
       animation: rail-scan 7s linear infinite;
@@ -102,11 +103,11 @@
     .brand span:last-child {
       margin-left: 9px;
       color: transparent;
-      background: linear-gradient(90deg, var(--green), #efffcf, var(--green));
+      background: linear-gradient(90deg, var(--accent), #ffffff, var(--accent));
       background-clip: text;
       -webkit-background-clip: text;
       background-size: 220% auto;
-      text-shadow: 0 0 28px rgba(183,255,60,.2);
+      text-shadow: 0 0 28px rgba(197,203,209,.16);
       animation: logo .65s cubic-bezier(.22,1,.36,1) .08s both, brand-flow 4s linear .7s infinite;
     }
     .subtitle { margin: 12px 0 0; color: var(--muted); }
@@ -116,7 +117,7 @@
       position: absolute;
       width: 225px;
       height: 225px;
-      border: 1px solid rgba(143,163,150,.08);
+      border: 1px solid rgba(160,166,172,.08);
       border-radius: 42% 58% 35% 65% / 44% 35% 65% 56%;
     }
     .ring::before, .ring::after {
@@ -132,7 +133,7 @@
       z-index: 1;
       border: 1px solid var(--border);
       border-radius: 7px;
-      background: rgba(13,21,17,.78);
+      background: rgba(20,23,26,.82);
       padding: 15px;
       box-shadow: 0 16px 45px rgba(0,0,0,.15);
       animation: status-float 4.8s ease-in-out infinite;
@@ -145,8 +146,8 @@
       font: 700 10px ui-monospace, SFMono-Regular, Consolas, monospace;
       letter-spacing: .1em;
     }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px rgba(244,201,93,.08); }
-    .dot.live { background: var(--green-2); box-shadow: 0 0 14px rgba(117,230,106,.45); animation: pulse 1.6s ease-in-out infinite; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warning); box-shadow: 0 0 0 3px rgba(185,190,196,.08); }
+    .dot.live { background: var(--accent-2); box-shadow: 0 0 14px rgba(174,181,188,.38); animation: pulse 1.6s ease-in-out infinite; }
     .status-box strong { display: block; margin-top: 14px; font-size: 13px; }
     .status-box small { display: block; margin-top: 5px; color: var(--faint); }
 
@@ -160,7 +161,7 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: rgba(7,16,13,.91);
+      background: rgba(13,15,17,.92);
       padding: 0 26px;
       backdrop-filter: blur(18px);
     }
@@ -181,7 +182,7 @@
       bottom: -1px;
       left: 0;
       height: 3px;
-      background: var(--green);
+      background: var(--accent);
       content: "";
       transform: scaleX(0);
       transform-origin: left;
@@ -189,24 +190,9 @@
     }
     .nav.active { color: var(--text); }
     .nav.active::after {
-      box-shadow: 0 0 16px rgba(183,255,60,.45);
+      box-shadow: 0 0 16px rgba(197,203,209,.38);
       transform: scaleX(1);
       animation: underline-glow 2.2s ease-in-out infinite;
-    }
-
-    .auto-chip {
-      display: inline-flex;
-      min-height: 36px;
-      align-items: center;
-      gap: 8px;
-      border: 1px solid rgba(183,255,60,.25);
-      border-radius: 999px;
-      background: rgba(183,255,60,.055);
-      padding: 0 13px;
-      color: var(--green);
-      font: 800 9px ui-monospace, SFMono-Regular, Consolas, monospace;
-      letter-spacing: .09em;
-      animation: chip-breathe 2.7s ease-in-out infinite;
     }
 
     .content { width: 100%; max-width: 1500px; margin: 0 auto; padding: 24px 26px 38px; }
@@ -228,7 +214,7 @@
       width: 28px;
       height: 1px;
       margin: 0 0 3px 10px;
-      background: linear-gradient(90deg, var(--green), transparent);
+      background: linear-gradient(90deg, var(--accent), transparent);
       content: "";
       transform-origin: left;
       animation: eyebrow-line 2.5s ease-in-out infinite;
@@ -248,8 +234,8 @@
       transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
     }
     .search:focus-within {
-      border-color: rgba(183,255,60,.55);
-      box-shadow: 0 0 0 3px rgba(183,255,60,.07), 0 12px 32px rgba(0,0,0,.18);
+      border-color: rgba(197,203,209,.52);
+      box-shadow: 0 0 0 3px rgba(197,203,209,.07), 0 12px 32px rgba(0,0,0,.18);
       transform: translateY(-1px);
     }
     .search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); }
@@ -261,7 +247,7 @@
       overflow: hidden;
       border: 1px solid var(--border);
       border-radius: 7px;
-      background: linear-gradient(150deg, rgba(20,30,23,.98), rgba(11,19,14,.98));
+      background: linear-gradient(150deg, rgba(29,32,35,.98), rgba(20,22,24,.98));
       box-shadow: 0 18px 50px rgba(0,0,0,.1);
     }
     .panel::before {
@@ -271,7 +257,7 @@
       width: 210px;
       height: 210px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(183,255,60,.055), transparent 68%);
+      background: radial-gradient(circle, rgba(197,203,209,.045), transparent 68%);
       content: "";
       pointer-events: none;
       animation: panel-orb 7s ease-in-out infinite alternate;
@@ -280,14 +266,14 @@
       transition: transform .24s cubic-bezier(.22,1,.36,1), border-color .24s ease, box-shadow .24s ease;
     }
     .hero > .panel:hover, .metric:hover, .code-card:hover {
-      border-color: rgba(183,255,60,.26);
-      box-shadow: 0 22px 54px rgba(0,0,0,.22), 0 0 0 1px rgba(183,255,60,.025);
+      border-color: rgba(197,203,209,.24);
+      box-shadow: 0 22px 54px rgba(0,0,0,.22), 0 0 0 1px rgba(197,203,209,.025);
       transform: translateY(-3px);
     }
     .panel::after {
       position: absolute;
       inset: 0;
-      background: linear-gradient(115deg, transparent 20%, rgba(183,255,60,.035) 48%, transparent 76%);
+      background: linear-gradient(115deg, transparent 20%, rgba(197,203,209,.03) 48%, transparent 76%);
       content: "";
       pointer-events: none;
       transform: translateX(-130%);
@@ -306,14 +292,14 @@
       min-height: 32px;
       border: 1px solid var(--border);
       border-radius: 4px;
-      background: #08110d;
+      background: #121416;
       padding: 0 11px;
       color: var(--muted);
       cursor: pointer;
       font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace;
       transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease;
     }
-    .copy:hover { border-color: var(--green); background: rgba(183,255,60,.06); color: var(--green); transform: translateY(-1px); }
+    .copy:hover { border-color: var(--accent); background: rgba(197,203,209,.06); color: var(--accent); transform: translateY(-1px); }
     .copy:active { transform: scale(.96); }
     .room-code {
       display: block;
@@ -331,10 +317,10 @@
       transition: color .2s ease, text-shadow .2s ease, transform .2s cubic-bezier(.22,1,.36,1);
       animation: code-breathe 4s ease-in-out infinite;
     }
-    button.room-code:hover { color: var(--green); text-shadow: 0 0 30px rgba(183,255,60,.13); transform: translateX(3px); }
+    button.room-code:hover { color: var(--accent); text-shadow: 0 0 30px rgba(197,203,209,.12); transform: translateX(3px); }
     .room-count { display: flex; align-items: baseline; gap: 10px; margin-top: 20px; }
     .room-count strong {
-      color: var(--green);
+      color: var(--accent);
       font: 800 43px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
       letter-spacing: -.08em;
       animation: number-glow 3s ease-in-out infinite;
@@ -348,7 +334,7 @@
       height: 170px;
       place-items: center;
       border-radius: 50%;
-      background: conic-gradient(var(--green) var(--percent), #3b473f 0);
+      background: conic-gradient(var(--accent) var(--percent), #41464b 0);
       animation: ring-in .75s cubic-bezier(.22,1,.36,1);
     }
     .circle::before { position: absolute; width: 136px; height: 136px; border-radius: 50%; background: var(--panel); content: ""; }
@@ -356,7 +342,7 @@
       position: absolute;
       width: 188px;
       height: 188px;
-      border: 1px dashed rgba(183,255,60,.2);
+      border: 1px dashed rgba(197,203,209,.2);
       border-radius: 50%;
       content: "";
       animation: halo-spin 14s linear infinite;
@@ -374,7 +360,7 @@
       width: 42%;
       height: 2px;
       border-radius: 0;
-      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
       animation: metric-scan 4.5s ease-in-out infinite;
     }
     .metric:nth-child(2)::before { animation-delay: .45s; }
@@ -386,7 +372,7 @@
       letter-spacing: -.06em;
       transition: color .2s ease, text-shadow .2s ease;
     }
-    .metric:hover strong { color: var(--green); text-shadow: 0 0 22px rgba(183,255,60,.18); }
+    .metric:hover strong { color: var(--accent); text-shadow: 0 0 22px rgba(197,203,209,.16); }
 
     .table-panel { margin-top: 13px; }
     .table-head { display: flex; min-height: 64px; align-items: center; justify-content: space-between; padding: 13px 20px; }
@@ -403,11 +389,11 @@
       text-align: left;
       text-transform: uppercase;
     }
-    td { border-bottom: 1px solid rgba(40,54,44,.65); padding: 15px 20px; color: var(--muted); }
-    tr[data-player] { cursor: pointer; transition: background .16s, transform .18s ease; }
-    tr[data-player]:hover { background: rgba(183,255,60,.035); transform: translateX(4px); }
+    td { border-bottom: 1px solid rgba(56,60,64,.68); padding: 15px 20px; color: var(--muted); }
+    tr[data-player], tr[data-ranking] { cursor: pointer; transition: background .16s, transform .18s ease; }
+    tr[data-player]:hover, tr[data-ranking]:hover { background: rgba(197,203,209,.035); transform: translateX(4px); }
     td strong, .code { color: var(--text); }
-    .state { display: inline-flex; align-items: center; gap: 7px; color: var(--green-2); }
+    .state { display: inline-flex; align-items: center; gap: 7px; color: var(--accent-2); }
     .state::before {
       width: 7px;
       height: 7px;
@@ -417,13 +403,58 @@
       content: "";
       animation: state-ping 2s ease-in-out infinite;
     }
-    .state.tagged { color: var(--yellow); }
+    .state.tagged { color: var(--warning); }
+    .elo-pill {
+      display: inline-flex;
+      min-width: 56px;
+      justify-content: center;
+      border: 1px solid rgba(197,203,209,.24);
+      border-radius: 4px;
+      background: rgba(197,203,209,.06);
+      padding: 5px 8px;
+      color: var(--accent);
+      font: 800 11px ui-monospace, SFMono-Regular, Consolas, monospace;
+    }
+
+    .rankings-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; align-items: start; gap: 13px; }
+    .rankings-layout .table-panel { margin-top: 0; }
+    .result-panel { padding: 22px; }
+    .result-panel h2 { margin: 8px 0 8px; font-size: 25px; letter-spacing: -.035em; }
+    .result-panel > p:not(.section-label) { margin: 0 0 20px; color: var(--muted); line-height: 1.55; }
+    .result-field { display: block; margin-top: 13px; color: var(--faint); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .08em; }
+    .result-field select {
+      width: 100%;
+      height: 42px;
+      margin-top: 7px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      outline: 0;
+      background: var(--panel-2);
+      padding: 0 11px;
+      color: var(--text);
+      font: 600 12px Inter, ui-sans-serif, system-ui, sans-serif;
+    }
+    .result-field select:focus { border-color: rgba(197,203,209,.52); box-shadow: 0 0 0 3px rgba(197,203,209,.07); }
+    .record-result {
+      width: 100%;
+      min-height: 42px;
+      margin-top: 16px;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      background: var(--accent);
+      color: #101214;
+      font: 800 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .08em;
+      cursor: pointer;
+    }
+    .record-result:disabled { opacity: .45; cursor: wait; }
+    .result-notice { min-height: 19px; margin: 12px 0 0 !important; color: var(--accent) !important; font-size: 12px; }
 
     .codes { display: grid; grid-template-columns: minmax(0, 620px); gap: 13px; }
     .code-card { min-height: 270px; padding: 22px; }
     .code-card h2 { margin: 28px 0 20px; font: 800 39px/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: -.075em; }
-    .meter { height: 4px; overflow: hidden; border-radius: 3px; background: #303a33; }
-    .meter i { display: block; width: var(--fill); height: 100%; background: var(--green); transform-origin: left; animation: fill .8s cubic-bezier(.22,1,.36,1); }
+    .meter { height: 4px; overflow: hidden; border-radius: 3px; background: #34383d; }
+    .meter i { display: block; width: var(--fill); height: 100%; background: var(--accent); transform-origin: left; animation: fill .8s cubic-bezier(.22,1,.36,1); }
     .code-stats { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; border: 1px solid var(--border); }
     .code-stats span { padding: 12px; color: var(--faint); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
     .code-stats strong { display: block; margin-top: 4px; color: var(--text); font-size: 15px; }
@@ -439,7 +470,7 @@
       place-items: center;
       border: 1px solid var(--border);
       border-radius: 50%;
-      color: var(--green);
+      color: var(--accent);
       font: 800 10px ui-monospace, monospace;
       animation: event-orbit 3.4s ease-in-out infinite;
     }
@@ -465,9 +496,9 @@
     .drawer-grid span { display: block; color: var(--faint); font: 700 9px ui-monospace, monospace; }
     .drawer-grid strong { display: block; margin-top: 6px; }
     .copy.copied {
-      border-color: var(--green);
-      background: rgba(183,255,60,.13);
-      color: var(--green);
+      border-color: var(--accent);
+      background: rgba(197,203,209,.12);
+      color: var(--accent);
       animation: copy-pop .45s cubic-bezier(.22,1,.36,1);
     }
 
@@ -483,18 +514,17 @@
     @keyframes brand-flow { to { background-position: -220% center; } }
     @keyframes contour-one { from { transform: rotate(18deg) translate3d(-5px, 0, 0); } to { transform: rotate(31deg) translate3d(15px, 18px, 0); } }
     @keyframes contour-two { from { transform: rotate(-24deg) scale(1.28); } to { transform: rotate(-10deg) scale(1.4) translate3d(-12px, -8px, 0); } }
-    @keyframes status-float { 50% { border-color: rgba(183,255,60,.24); box-shadow: 0 20px 52px rgba(0,0,0,.24), 0 0 24px rgba(183,255,60,.035); transform: translateY(-3px); } }
-    @keyframes underline-glow { 50% { opacity: .55; box-shadow: 0 0 25px rgba(183,255,60,.75); } }
-    @keyframes chip-breathe { 50% { border-color: rgba(183,255,60,.5); box-shadow: 0 0 24px rgba(183,255,60,.08); transform: translateY(-1px); } }
+    @keyframes status-float { 50% { border-color: rgba(197,203,209,.22); box-shadow: 0 20px 52px rgba(0,0,0,.24), 0 0 24px rgba(197,203,209,.03); transform: translateY(-3px); } }
+    @keyframes underline-glow { 50% { opacity: .55; box-shadow: 0 0 25px rgba(197,203,209,.58); } }
     @keyframes heading-enter { from { opacity: 0; transform: translateY(-10px); } }
     @keyframes eyebrow-line { 50% { opacity: .35; transform: scaleX(.45); } }
     @keyframes panel-orb { to { transform: translate3d(-55px, 55px, 0) scale(1.2); } }
-    @keyframes code-breathe { 50% { text-shadow: 0 0 28px rgba(183,255,60,.09); } }
-    @keyframes number-glow { 50% { text-shadow: 0 0 26px rgba(183,255,60,.2); } }
+    @keyframes code-breathe { 50% { text-shadow: 0 0 28px rgba(197,203,209,.08); } }
+    @keyframes number-glow { 50% { text-shadow: 0 0 26px rgba(197,203,209,.16); } }
     @keyframes halo-spin { to { transform: rotate(360deg); } }
     @keyframes metric-scan { 0%, 18% { transform: translateX(0); opacity: 0; } 45% { opacity: .7; } 72%, 100% { transform: translateX(390%); opacity: 0; } }
     @keyframes state-ping { 50% { opacity: .45; transform: scale(.72); } }
-    @keyframes event-orbit { 50% { border-color: rgba(183,255,60,.48); box-shadow: 0 0 18px rgba(183,255,60,.1); transform: rotate(8deg) scale(1.06); } }
+    @keyframes event-orbit { 50% { border-color: rgba(197,203,209,.42); box-shadow: 0 0 18px rgba(197,203,209,.08); transform: rotate(8deg) scale(1.06); } }
     @keyframes copy-pop { 45% { transform: scale(1.09); } }
     @keyframes enter { from { opacity: 0; filter: blur(3px); transform: translateY(10px); } }
     @keyframes ring-in { from { opacity: 0; transform: rotate(-18deg) scale(.88); } }
@@ -510,19 +540,19 @@
       .app { margin-left: 80px; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
       .codes { grid-template-columns: minmax(0, 620px); }
+      .rankings-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
       .rail { display: none; }
       .app { margin-left: 0; }
       .topbar { position: relative; flex-direction: column-reverse; align-items: stretch; padding: 10px 14px 0; }
       nav { min-height: 46px; justify-content: space-between; gap: 8px; }
-      .auto-chip { align-self: flex-end; }
       .content { padding: 20px 14px 30px; }
       .heading { align-items: stretch; flex-direction: column; gap: 14px; }
       .search { width: 100%; }
       .hero { grid-template-columns: 1fr; }
       .metrics, .codes { grid-template-columns: 1fr; }
-      th:nth-child(3), td:nth-child(3) { display: none; }
+      .player-table th:nth-child(3), .player-table td:nth-child(3) { display: none; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -538,8 +568,8 @@
     <div class="rail-art" aria-hidden="true"><i class="ring one"></i><i class="ring two"></i></div>
     <section class="status-box">
       <div class="status-line"><i class="dot" id="statusDot"></i><span>LOBBY STATUS</span></div>
-      <strong id="collectorText">Collector waiting</strong>
-      <small id="collectorSubtext">Connect the PC collector</small>
+      <strong id="collectorText">Waiting for connection</strong>
+      <small id="collectorSubtext">Start Gorilla Tag to connect</small>
     </section>
   </aside>
 
@@ -549,15 +579,15 @@
         <button class="nav active" data-view="Overview">Overview</button>
         <button class="nav" data-view="Codes">Codes</button>
         <button class="nav" data-view="Players">Players</button>
+        <button class="nav" data-view="Rankings">Rankings</button>
         <button class="nav" data-view="Activity">Activity</button>
       </nav>
-      <span class="auto-chip"><i class="dot" id="topStatusDot"></i>LIVE MATCH LINK</span>
     </header>
 
     <div class="content">
       <div class="heading">
         <div><p class="eyebrow" id="eyebrow">RANKED NETWORK / OVERVIEW</p><h1 id="title">Overview</h1></div>
-        <label class="search">⌕<input id="search" aria-label="Search players" placeholder="Search player, room, status"></label>
+        <label class="search">⌕<input id="search" aria-label="Search players" placeholder="Search player, alias, room or Elo"></label>
       </div>
       <div id="view"></div>
     </div>
@@ -572,6 +602,7 @@
       serverOnline: false,
       rooms: [],
       players: [],
+      rankings: [],
       events: [],
       metrics: { onlinePlayers: 0, activeCodes: 0, tagsToday: 0, avgRuntime: "0m" }
     };
@@ -582,6 +613,7 @@
     let query = "";
     let renderedMarkup = "";
     let refreshInFlight = false;
+    let resultNotice = "";
 
     const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -604,7 +636,16 @@
     function filteredPlayers() {
       const needle = query.trim().toLowerCase();
       return data.players.filter(player =>
-        `${player.name} ${player.room} ${player.status}`.toLowerCase().includes(needle)
+        `${player.name} ${player.room} ${player.status} ${player.elo}`.toLowerCase().includes(needle)
+      );
+    }
+
+    function filteredRankings() {
+      const needle = query.trim().toLowerCase();
+      return data.rankings.filter(player =>
+        `${player.name} ${player.aliases.join(" ")} ${player.elo} ${player.wins} ${player.losses}`
+          .toLowerCase()
+          .includes(needle)
       );
     }
 
@@ -614,13 +655,14 @@
           <td><strong>${escapeHtml(player.name)}</strong></td>
           <td class="code">${escapeHtml(player.room)}</td>
           <td><span class="state ${player.status.toLowerCase()}">${escapeHtml(player.status)}</span></td>
+          <td><span class="elo-pill">${Number(player.elo)}</span></td>
           <td>${escapeHtml(player.runtime)}</td>
           <td>${Number(player.tags)}</td>
         </tr>`).join("");
       return `
         <div class="table-scroll">
-          <table>
-            <thead><tr><th>Player</th><th>Room</th><th>Status</th><th>Observed runtime</th><th>Tags</th></tr></thead>
+          <table class="player-table">
+            <thead><tr><th>Player</th><th>Room</th><th>Status</th><th>Elo</th><th>Observed runtime</th><th>Tags</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
           ${rows ? "" : '<div class="empty">No players yet. Launch Gorilla Tag and join a code.</div>'}
@@ -692,6 +734,57 @@
       </section>`;
     }
 
+    function rankingTable(players) {
+      const rows = players.map(player => {
+        const rank = data.rankings.findIndex(item => item.id === player.id) + 1;
+        return `
+          <tr data-ranking="${escapeHtml(player.id)}" tabindex="0">
+            <td class="code">#${rank}</td>
+            <td><strong>${escapeHtml(player.name)}</strong></td>
+            <td><span class="elo-pill">${Number(player.elo)}</span></td>
+            <td>${Number(player.wins)}–${Number(player.losses)}</td>
+            <td>${Number(player.games)}</td>
+            <td><time data-event-time="${escapeHtml(player.lastSeen)}"></time></td>
+          </tr>`;
+      }).join("");
+
+      return `
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Rank</th><th>Player</th><th>Elo</th><th>Record</th><th>Games</th><th>Last seen</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          ${rows ? "" : '<div class="empty">No saved players match that search.</div>'}
+        </div>`;
+    }
+
+    function rankings() {
+      const options = data.rankings.map(player =>
+        `<option value="${escapeHtml(player.id)}">${escapeHtml(player.name)} · ${Number(player.elo)} Elo</option>`
+      ).join("");
+      const canRecord = data.rankings.length >= 2;
+
+      return `<section class="view rankings-layout">
+        <article class="panel table-panel">
+          <div class="table-head"><div><p class="section-label">ELO RANKINGS</p><small>Saved by stable player ID, including previous names</small></div></div>
+          ${rankingTable(filteredRankings())}
+        </article>
+        <aside class="panel result-panel">
+          <p class="section-label">RANKED RESULT</p>
+          <h2>Record a result</h2>
+          <p>Select the winner and loser. Ratings use standard K-32 Elo and every result is protected from accidental duplicate submission.</p>
+          <label class="result-field">WINNER
+            <select id="winnerSelect" ${canRecord ? "" : "disabled"}><option value="">Choose winner</option>${options}</select>
+          </label>
+          <label class="result-field">LOSER
+            <select id="loserSelect" ${canRecord ? "" : "disabled"}><option value="">Choose loser</option>${options}</select>
+          </label>
+          <button class="record-result" id="recordResult" ${canRecord ? "" : "disabled"}>RECORD RESULT</button>
+          <p class="result-notice" id="resultNotice">${escapeHtml(resultNotice)}</p>
+        </aside>
+      </section>`;
+    }
+
     function activity() {
       return `<section class="view activity">
         <article class="panel feed"><p class="section-label">EVENT STREAM</p><ol>${data.events.map(event => `
@@ -719,6 +812,75 @@
         row.addEventListener("click", open);
         row.addEventListener("keydown", event => event.key === "Enter" && open());
       });
+      document.querySelectorAll("tr[data-ranking]").forEach(row => {
+        const open = () => showRanking(
+          data.rankings.find(player => player.id === row.dataset.ranking)
+        );
+        row.addEventListener("click", open);
+        row.addEventListener("keydown", event => event.key === "Enter" && open());
+      });
+      document.getElementById("recordResult")?.addEventListener("click", recordEloResult);
+    }
+
+    async function recordEloResult() {
+      const button = document.getElementById("recordResult");
+      const winnerId = document.getElementById("winnerSelect")?.value || "";
+      const loserId = document.getElementById("loserSelect")?.value || "";
+
+      if (!winnerId || !loserId) {
+        resultNotice = "Choose both players.";
+        document.getElementById("resultNotice").textContent = resultNotice;
+        return;
+      }
+      if (winnerId === loserId) {
+        resultNotice = "The winner and loser must be different.";
+        document.getElementById("resultNotice").textContent = resultNotice;
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "SAVING RESULT…";
+      const uniquePart = globalThis.crypto?.randomUUID?.() ||
+        `${Math.random().toString(36).slice(2)}-${Date.now()}`;
+      const resultId = `${Date.now()}-${uniquePart}`;
+
+      try {
+        const url = `${ENDPOINT}/api/elo/result?winner_id=${encodeURIComponent(winnerId)}&loser_id=${encodeURIComponent(loserId)}&result_id=${encodeURIComponent(resultId)}`;
+        const response = await fetch(url, { method: "POST", cache: "no-store" });
+        const payload = await response.json();
+        if (!response.ok || !payload.ok) {
+          throw new Error(payload.error || `Could not save result (${response.status})`);
+        }
+
+        if (payload.duplicate) {
+          resultNotice = "That result was already recorded.";
+        } else {
+          const winner = data.rankings.find(player => player.id === winnerId);
+          const loser = data.rankings.find(player => player.id === loserId);
+          if (winner) {
+            winner.elo = Number(payload.winner.elo);
+            winner.wins++;
+            winner.games++;
+          }
+          if (loser) {
+            loser.elo = Number(payload.loser.elo);
+            loser.losses++;
+            loser.games++;
+          }
+          data.rankings.sort((left, right) =>
+            right.elo - left.elo || left.name.localeCompare(right.name)
+          );
+          resultNotice = `${payload.winner.display_name} gained ${Number(payload.change)} Elo.`;
+        }
+
+        renderedMarkup = "";
+        render(false);
+      } catch (error) {
+        resultNotice = error.message || "Could not record the result.";
+        document.getElementById("resultNotice").textContent = resultNotice;
+        button.disabled = false;
+        button.textContent = "RECORD RESULT";
+      }
     }
 
     function showPlayer(player) {
@@ -730,9 +892,33 @@
           <div class="drawer-grid">
             <div><span>ROOM</span><strong>${escapeHtml(player.room)}</strong></div>
             <div><span>STATUS</span><strong>${escapeHtml(player.status)}</strong></div>
+            <div><span>ELO</span><strong>${Number(player.elo)}</strong></div>
             <div><span>OBSERVED RUNTIME</span><strong>${escapeHtml(player.runtime)}</strong></div>
             <div><span>TAGS</span><strong>${Number(player.tags)}</strong></div>
           </div>
+        </aside>`;
+      document.querySelectorAll(".drawer button, .drawer-backdrop").forEach(button =>
+        button.addEventListener("click", () => document.getElementById("drawerRoot").innerHTML = "")
+      );
+    }
+
+    function showRanking(player) {
+      if (!player) return;
+      const aliases = player.aliases
+        .filter(alias => alias.toLowerCase() !== player.name.toLowerCase())
+        .join(", ") || "No previous names";
+      document.getElementById("drawerRoot").innerHTML = `
+        <button class="drawer-backdrop" aria-label="Close ranking details"></button>
+        <aside class="drawer"><button aria-label="Close ranking details">×</button>
+          <p class="eyebrow">PERSISTENT RANKING</p><h2>${escapeHtml(player.name)}</h2>
+          <div class="drawer-grid">
+            <div><span>ELO</span><strong>${Number(player.elo)}</strong></div>
+            <div><span>RECORD</span><strong>${Number(player.wins)}–${Number(player.losses)}</strong></div>
+            <div><span>GAMES</span><strong>${Number(player.games)}</strong></div>
+            <div><span>LAST SEEN</span><strong>${escapeHtml(relativeTime(player.lastSeen))}</strong></div>
+          </div>
+          <p class="section-label" style="margin-top:24px">KNOWN NAMES</p>
+          <p style="color:var(--muted)">${escapeHtml(aliases)}</p>
         </aside>`;
       document.querySelectorAll(".drawer button, .drawer-backdrop").forEach(button =>
         button.addEventListener("click", () => document.getElementById("drawerRoot").innerHTML = "")
@@ -755,7 +941,8 @@
       const nextMarkup =
         activeView === "Overview" ? overview() :
         activeView === "Codes" ? codes() :
-        activeView === "Players" ? players() : activity();
+        activeView === "Players" ? players() :
+        activeView === "Rankings" ? rankings() : activity();
 
       if (nextMarkup === renderedMarkup) {
         updateRelativeTimes();
@@ -774,7 +961,7 @@
           if (typeof element.animate === "function") {
             element.animate(
               [
-                { transform: "translateY(5px) scale(.96)", opacity: .5, color: "var(--green)" },
+                { transform: "translateY(5px) scale(.96)", opacity: .5, color: "var(--accent)" },
                 { transform: "translateY(0) scale(1)", opacity: 1 }
               ],
               { duration: 360, easing: "cubic-bezier(.22,1,.36,1)" }
@@ -798,7 +985,7 @@
             );
           }
         });
-        viewRoot.querySelectorAll("tr[data-player], .feed li, .metric").forEach((element, index) => {
+        viewRoot.querySelectorAll("tr[data-player], tr[data-ranking], .feed li, .metric").forEach((element, index) => {
           if (typeof element.animate === "function") {
             element.animate(
               [
@@ -836,8 +1023,16 @@
             activePlayers: Number(room.active_players), tags: Number(room.tags)
           })),
           players: (payload.players || []).map(player => ({
-            name: player.display_name, room: player.room, status: player.status,
-            runtime: formatRuntime(player.runtime_seconds), tags: Number(player.tag_count)
+            id: player.player_id, name: player.display_name, room: player.room, status: player.status,
+            elo: Number(player.elo ?? 1000), runtime: formatRuntime(player.runtime_seconds),
+            tags: Number(player.tag_count)
+          })),
+          rankings: (payload.rankings || []).map(player => ({
+            id: player.player_id, name: player.display_name,
+            aliases: Array.isArray(player.aliases) ? player.aliases.map(String) : [],
+            elo: Number(player.elo ?? 1000), wins: Number(player.wins || 0),
+            losses: Number(player.losses || 0), games: Number(player.games || 0),
+            lastSeen: player.last_seen_at
           })),
           events: (payload.events || []).map(event => ({
             id: event.id, type: event.type, detail: event.detail, playerName: event.display_name,
@@ -851,9 +1046,8 @@
           }
         };
         document.getElementById("statusDot").classList.toggle("live", data.connected);
-        document.getElementById("topStatusDot").classList.toggle("live", data.connected);
         document.getElementById("collectorText").textContent =
-          data.connected ? "Live room connected" : "Mod connected";
+          data.connected ? "Live room connected" : "Collector connected";
         document.getElementById("collectorSubtext").textContent =
           data.connected && data.rooms.length
             ? `Showing ${data.rooms[0].code} · ${data.metrics.onlinePlayers} players`
@@ -862,10 +1056,9 @@
       } catch (_) {
         data = blankData();
         document.getElementById("statusDot").classList.remove("live");
-        document.getElementById("topStatusDot").classList.remove("live");
-        document.getElementById("collectorText").textContent = "Mod not detected";
+        document.getElementById("collectorText").textContent = "Waiting for connection";
         document.getElementById("collectorSubtext").textContent =
-          "Launch Gorilla Tag with the plugin";
+          "Start Gorilla Tag to connect";
         render(false);
       } finally {
         refreshInFlight = false;
