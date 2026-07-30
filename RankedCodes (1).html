@@ -1,0 +1,899 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#07100d">
+  <title>Ranked Codes — Live Gorilla Tag Lobby</title>
+  <style>
+    :root {
+      --bg: #07100d;
+      --rail: #08120e;
+      --panel: #111a14;
+      --panel-2: #0c1510;
+      --border: #28362c;
+      --border-strong: #435547;
+      --text: #edf4ec;
+      --muted: #85998b;
+      --faint: #5d6e62;
+      --green: #b7ff3c;
+      --green-2: #75e66a;
+      --yellow: #f4c95d;
+      --mouse-x: 72%;
+      --mouse-y: 18%;
+    }
+
+    * { box-sizing: border-box; }
+    html { color-scheme: dark; background: var(--bg); }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      background:
+        radial-gradient(circle at 84% 8%, rgba(54, 104, 66, .20), transparent 28%),
+        linear-gradient(rgba(255,255,255,.012) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.01) 1px, transparent 1px),
+        var(--bg);
+      background-size: auto, 40px 40px, 40px 40px, auto;
+      color: var(--text);
+      font: 14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif;
+      animation: field 18s ease-in-out infinite alternate;
+    }
+    body::before {
+      position: fixed;
+      inset: -30%;
+      z-index: 0;
+      background:
+        radial-gradient(circle at var(--mouse-x) var(--mouse-y), rgba(183,255,60,.09), transparent 20%),
+        radial-gradient(circle at 18% 82%, rgba(117,230,106,.055), transparent 24%);
+      content: "";
+      filter: blur(22px);
+      pointer-events: none;
+      animation: aurora 10s ease-in-out infinite alternate;
+    }
+    body::after {
+      position: fixed;
+      inset: -100% 0 0;
+      z-index: 2;
+      height: 45%;
+      background: linear-gradient(180deg, transparent, rgba(183,255,60,.018), transparent);
+      content: "";
+      pointer-events: none;
+      animation: page-scan 9s linear infinite;
+    }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+    button:focus-visible, input:focus-visible, tr:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .rail {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 10;
+      display: flex;
+      width: 270px;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+      background: linear-gradient(180deg, rgba(8,18,14,.96), rgba(5,12,9,.99));
+      padding: 30px 27px 26px;
+    }
+    .rail::after {
+      position: absolute;
+      inset: 0 0 auto;
+      height: 120px;
+      background: linear-gradient(180deg, transparent, rgba(183,255,60,.045), transparent);
+      content: "";
+      pointer-events: none;
+      animation: rail-scan 7s linear infinite;
+    }
+
+    .brand {
+      display: flex;
+      color: var(--text);
+      font: 800 32px/.92 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: -.085em;
+      text-decoration: none;
+    }
+    .brand span { animation: logo .65s cubic-bezier(.22,1,.36,1) both; }
+    .brand span:last-child {
+      margin-left: 9px;
+      color: transparent;
+      background: linear-gradient(90deg, var(--green), #efffcf, var(--green));
+      background-clip: text;
+      -webkit-background-clip: text;
+      background-size: 220% auto;
+      text-shadow: 0 0 28px rgba(183,255,60,.2);
+      animation: logo .65s cubic-bezier(.22,1,.36,1) .08s both, brand-flow 4s linear .7s infinite;
+    }
+    .subtitle { margin: 12px 0 0; color: var(--muted); }
+
+    .rail-art { position: absolute; inset: 135px 0 145px; pointer-events: none; }
+    .ring {
+      position: absolute;
+      width: 225px;
+      height: 225px;
+      border: 1px solid rgba(143,163,150,.08);
+      border-radius: 42% 58% 35% 65% / 44% 35% 65% 56%;
+    }
+    .ring::before, .ring::after {
+      position: absolute; content: ""; border: inherit; border-radius: inherit;
+    }
+    .ring::before { inset: 18px; }
+    .ring::after { inset: 40px; }
+    .ring.one { top: 10px; left: -70px; animation: contour-one 10s ease-in-out infinite alternate; }
+    .ring.two { right: -120px; bottom: 70px; animation: contour-two 13s ease-in-out infinite alternate; }
+
+    .status-box {
+      position: relative;
+      z-index: 1;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: rgba(13,21,17,.78);
+      padding: 15px;
+      box-shadow: 0 16px 45px rgba(0,0,0,.15);
+      animation: status-float 4.8s ease-in-out infinite;
+    }
+    .status-line {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font: 700 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .1em;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); box-shadow: 0 0 0 3px rgba(244,201,93,.08); }
+    .dot.live { background: var(--green-2); box-shadow: 0 0 14px rgba(117,230,106,.45); animation: pulse 1.6s ease-in-out infinite; }
+    .status-box strong { display: block; margin-top: 14px; font-size: 13px; }
+    .status-box small { display: block; margin-top: 5px; color: var(--faint); }
+
+    .app { min-height: 100vh; margin-left: 270px; }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 8;
+      display: flex;
+      min-height: 70px;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      background: rgba(7,16,13,.91);
+      padding: 0 26px;
+      backdrop-filter: blur(18px);
+    }
+    nav { display: flex; align-self: stretch; gap: 28px; }
+    .nav {
+      position: relative;
+      border: 0;
+      background: transparent;
+      color: var(--faint);
+      cursor: pointer;
+      font-weight: 700;
+      transition: color .2s ease, transform .2s ease;
+    }
+    .nav:hover { color: var(--muted); transform: translateY(-1px); }
+    .nav::after {
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: 3px;
+      background: var(--green);
+      content: "";
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform .22s cubic-bezier(.22,1,.36,1);
+    }
+    .nav.active { color: var(--text); }
+    .nav.active::after {
+      box-shadow: 0 0 16px rgba(183,255,60,.45);
+      transform: scaleX(1);
+      animation: underline-glow 2.2s ease-in-out infinite;
+    }
+
+    .auto-chip {
+      display: inline-flex;
+      min-height: 36px;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(183,255,60,.25);
+      border-radius: 999px;
+      background: rgba(183,255,60,.055);
+      padding: 0 13px;
+      color: var(--green);
+      font: 800 9px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .09em;
+      animation: chip-breathe 2.7s ease-in-out infinite;
+    }
+
+    .content { width: 100%; max-width: 1500px; margin: 0 auto; padding: 24px 26px 38px; }
+    .heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      animation: heading-enter .6s cubic-bezier(.22,1,.36,1) both;
+    }
+    .eyebrow {
+      margin: 0;
+      color: var(--muted);
+      font: 700 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .12em;
+    }
+    .eyebrow::after {
+      display: inline-block;
+      width: 28px;
+      height: 1px;
+      margin: 0 0 3px 10px;
+      background: linear-gradient(90deg, var(--green), transparent);
+      content: "";
+      transform-origin: left;
+      animation: eyebrow-line 2.5s ease-in-out infinite;
+    }
+    h1 { margin: 5px 0 0; font-size: 29px; letter-spacing: -.045em; }
+    .search {
+      display: flex;
+      width: min(320px, 36vw);
+      height: 40px;
+      align-items: center;
+      gap: 9px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--panel-2);
+      padding: 0 12px;
+      color: var(--faint);
+      transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    }
+    .search:focus-within {
+      border-color: rgba(183,255,60,.55);
+      box-shadow: 0 0 0 3px rgba(183,255,60,.07), 0 12px 32px rgba(0,0,0,.18);
+      transform: translateY(-1px);
+    }
+    .search input { width: 100%; border: 0; outline: 0; background: transparent; color: var(--text); }
+
+    .view { animation: enter .45s cubic-bezier(.22,1,.36,1) both; }
+    .hero { display: grid; grid-template-columns: 1.06fr .94fr; gap: 14px; }
+    .panel {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      background: linear-gradient(150deg, rgba(20,30,23,.98), rgba(11,19,14,.98));
+      box-shadow: 0 18px 50px rgba(0,0,0,.1);
+    }
+    .panel::before {
+      position: absolute;
+      top: -100px;
+      right: -90px;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(183,255,60,.055), transparent 68%);
+      content: "";
+      pointer-events: none;
+      animation: panel-orb 7s ease-in-out infinite alternate;
+    }
+    .hero > .panel, .metric, .code-card {
+      transition: transform .24s cubic-bezier(.22,1,.36,1), border-color .24s ease, box-shadow .24s ease;
+    }
+    .hero > .panel:hover, .metric:hover, .code-card:hover {
+      border-color: rgba(183,255,60,.26);
+      box-shadow: 0 22px 54px rgba(0,0,0,.22), 0 0 0 1px rgba(183,255,60,.025);
+      transform: translateY(-3px);
+    }
+    .panel::after {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, transparent 20%, rgba(183,255,60,.035) 48%, transparent 76%);
+      content: "";
+      pointer-events: none;
+      transform: translateX(-130%);
+      transition: transform .7s cubic-bezier(.22,1,.36,1);
+    }
+    .panel:hover::after { transform: translateX(130%); }
+    .room, .occupancy { min-height: 290px; padding: 25px 27px; }
+    .section-label {
+      margin: 0;
+      color: var(--muted);
+      font: 700 10px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .12em;
+    }
+    .room-top { display: flex; justify-content: space-between; }
+    .copy {
+      min-height: 32px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: #08110d;
+      padding: 0 11px;
+      color: var(--muted);
+      cursor: pointer;
+      font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace;
+      transition: border-color .18s ease, color .18s ease, background .18s ease, transform .18s ease;
+    }
+    .copy:hover { border-color: var(--green); background: rgba(183,255,60,.06); color: var(--green); transform: translateY(-1px); }
+    .copy:active { transform: scale(.96); }
+    .room-code {
+      display: block;
+      overflow: hidden;
+      max-width: 100%;
+      border: 0;
+      background: transparent;
+      margin: 28px 0 12px;
+      padding: 0;
+      color: var(--text);
+      cursor: pointer;
+      font: 820 clamp(43px, 5vw, 75px)/.92 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: -.08em;
+      text-overflow: ellipsis;
+      transition: color .2s ease, text-shadow .2s ease, transform .2s cubic-bezier(.22,1,.36,1);
+      animation: code-breathe 4s ease-in-out infinite;
+    }
+    button.room-code:hover { color: var(--green); text-shadow: 0 0 30px rgba(183,255,60,.13); transform: translateX(3px); }
+    .room-count { display: flex; align-items: baseline; gap: 10px; margin-top: 20px; }
+    .room-count strong {
+      color: var(--green);
+      font: 800 43px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: -.08em;
+      animation: number-glow 3s ease-in-out infinite;
+    }
+    .room-count span { color: var(--muted); font-weight: 700; }
+
+    .occupancy-wrap { display: grid; height: 220px; place-items: center; }
+    .circle {
+      display: grid;
+      width: 170px;
+      height: 170px;
+      place-items: center;
+      border-radius: 50%;
+      background: conic-gradient(var(--green) var(--percent), #3b473f 0);
+      animation: ring-in .75s cubic-bezier(.22,1,.36,1);
+    }
+    .circle::before { position: absolute; width: 136px; height: 136px; border-radius: 50%; background: var(--panel); content: ""; }
+    .circle::after {
+      position: absolute;
+      width: 188px;
+      height: 188px;
+      border: 1px dashed rgba(183,255,60,.2);
+      border-radius: 50%;
+      content: "";
+      animation: halo-spin 14s linear infinite;
+    }
+    .circle div { position: relative; z-index: 1; text-align: center; }
+    .circle strong { display: block; font: 800 28px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .circle small { color: var(--muted); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .12em; }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 13px; }
+    .metric { min-height: 92px; padding: 17px; }
+    .metric::before {
+      top: 0;
+      right: auto;
+      left: -55%;
+      width: 42%;
+      height: 2px;
+      border-radius: 0;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      animation: metric-scan 4.5s ease-in-out infinite;
+    }
+    .metric:nth-child(2)::before { animation-delay: .45s; }
+    .metric:nth-child(3)::before { animation-delay: .9s; }
+    .metric:nth-child(4)::before { animation-delay: 1.35s; }
+    .metric p { margin: 0 0 4px; color: var(--muted); font-size: 12px; }
+    .metric strong {
+      font: 800 29px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: -.06em;
+      transition: color .2s ease, text-shadow .2s ease;
+    }
+    .metric:hover strong { color: var(--green); text-shadow: 0 0 22px rgba(183,255,60,.18); }
+
+    .table-panel { margin-top: 13px; }
+    .table-head { display: flex; min-height: 64px; align-items: center; justify-content: space-between; padding: 13px 20px; }
+    .table-head small { color: var(--faint); }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 20px;
+      color: var(--faint);
+      font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace;
+      letter-spacing: .09em;
+      text-align: left;
+      text-transform: uppercase;
+    }
+    td { border-bottom: 1px solid rgba(40,54,44,.65); padding: 15px 20px; color: var(--muted); }
+    tr[data-player] { cursor: pointer; transition: background .16s, transform .18s ease; }
+    tr[data-player]:hover { background: rgba(183,255,60,.035); transform: translateX(4px); }
+    td strong, .code { color: var(--text); }
+    .state { display: inline-flex; align-items: center; gap: 7px; color: var(--green-2); }
+    .state::before {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 10px currentColor;
+      content: "";
+      animation: state-ping 2s ease-in-out infinite;
+    }
+    .state.tagged { color: var(--yellow); }
+
+    .codes { display: grid; grid-template-columns: minmax(0, 620px); gap: 13px; }
+    .code-card { min-height: 270px; padding: 22px; }
+    .code-card h2 { margin: 28px 0 20px; font: 800 39px/1 ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: -.075em; }
+    .meter { height: 4px; overflow: hidden; border-radius: 3px; background: #303a33; }
+    .meter i { display: block; width: var(--fill); height: 100%; background: var(--green); transform-origin: left; animation: fill .8s cubic-bezier(.22,1,.36,1); }
+    .code-stats { display: grid; grid-template-columns: 1fr 1fr; margin-top: 20px; border: 1px solid var(--border); }
+    .code-stats span { padding: 12px; color: var(--faint); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .code-stats strong { display: block; margin-top: 4px; color: var(--text); font-size: 15px; }
+
+    .activity { display: block; }
+    .feed { padding: 20px; }
+    .feed ol { margin: 18px 0 0; padding: 0; list-style: none; }
+    .feed li { display: grid; grid-template-columns: 34px 1fr auto; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding: 16px 0; }
+    .event {
+      display: grid;
+      width: 31px;
+      height: 31px;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: var(--green);
+      font: 800 10px ui-monospace, monospace;
+      animation: event-orbit 3.4s ease-in-out infinite;
+    }
+    .feed p { margin: 3px 0 0; color: var(--muted); }
+    .feed time { color: var(--faint); font-size: 10px; }
+
+    .drawer-backdrop { position: fixed; inset: 0; z-index: 20; border: 0; background: rgba(0,0,0,.58); backdrop-filter: blur(4px); }
+    .drawer {
+      position: fixed;
+      inset: 0 0 0 auto;
+      z-index: 21;
+      width: min(410px, 92vw);
+      border-left: 1px solid var(--border-strong);
+      background: var(--rail);
+      padding: 28px;
+      box-shadow: -25px 0 80px rgba(0,0,0,.45);
+      animation: drawer .3s cubic-bezier(.22,1,.36,1);
+    }
+    .drawer button { float: right; width: 34px; height: 34px; border: 1px solid var(--border); border-radius: 4px; background: var(--panel); cursor: pointer; }
+    .drawer h2 { margin-top: 30px; font-size: 32px; }
+    .drawer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 26px; }
+    .drawer-grid div { border: 1px solid var(--border); background: var(--panel); padding: 15px; }
+    .drawer-grid span { display: block; color: var(--faint); font: 700 9px ui-monospace, monospace; }
+    .drawer-grid strong { display: block; margin-top: 6px; }
+    .copy.copied {
+      border-color: var(--green);
+      background: rgba(183,255,60,.13);
+      color: var(--green);
+      animation: copy-pop .45s cubic-bezier(.22,1,.36,1);
+    }
+
+    .empty { padding: 32px; color: var(--faint); text-align: center; }
+    [hidden] { display: none !important; }
+
+    @keyframes pulse { 50% { opacity: .38; } }
+    @keyframes field { to { background-position: 82% 13%, 20px 10px, -12px 20px, 0 0; } }
+    @keyframes aurora { to { transform: translate3d(3%, -2%, 0) scale(1.08); } }
+    @keyframes page-scan { to { transform: translateY(420vh); } }
+    @keyframes rail-scan { from { transform: translateY(-160px); } to { transform: translateY(105vh); } }
+    @keyframes logo { from { opacity: 0; filter: blur(5px); transform: translateY(12px); } }
+    @keyframes brand-flow { to { background-position: -220% center; } }
+    @keyframes contour-one { from { transform: rotate(18deg) translate3d(-5px, 0, 0); } to { transform: rotate(31deg) translate3d(15px, 18px, 0); } }
+    @keyframes contour-two { from { transform: rotate(-24deg) scale(1.28); } to { transform: rotate(-10deg) scale(1.4) translate3d(-12px, -8px, 0); } }
+    @keyframes status-float { 50% { border-color: rgba(183,255,60,.24); box-shadow: 0 20px 52px rgba(0,0,0,.24), 0 0 24px rgba(183,255,60,.035); transform: translateY(-3px); } }
+    @keyframes underline-glow { 50% { opacity: .55; box-shadow: 0 0 25px rgba(183,255,60,.75); } }
+    @keyframes chip-breathe { 50% { border-color: rgba(183,255,60,.5); box-shadow: 0 0 24px rgba(183,255,60,.08); transform: translateY(-1px); } }
+    @keyframes heading-enter { from { opacity: 0; transform: translateY(-10px); } }
+    @keyframes eyebrow-line { 50% { opacity: .35; transform: scaleX(.45); } }
+    @keyframes panel-orb { to { transform: translate3d(-55px, 55px, 0) scale(1.2); } }
+    @keyframes code-breathe { 50% { text-shadow: 0 0 28px rgba(183,255,60,.09); } }
+    @keyframes number-glow { 50% { text-shadow: 0 0 26px rgba(183,255,60,.2); } }
+    @keyframes halo-spin { to { transform: rotate(360deg); } }
+    @keyframes metric-scan { 0%, 18% { transform: translateX(0); opacity: 0; } 45% { opacity: .7; } 72%, 100% { transform: translateX(390%); opacity: 0; } }
+    @keyframes state-ping { 50% { opacity: .45; transform: scale(.72); } }
+    @keyframes event-orbit { 50% { border-color: rgba(183,255,60,.48); box-shadow: 0 0 18px rgba(183,255,60,.1); transform: rotate(8deg) scale(1.06); } }
+    @keyframes copy-pop { 45% { transform: scale(1.09); } }
+    @keyframes enter { from { opacity: 0; filter: blur(3px); transform: translateY(10px); } }
+    @keyframes ring-in { from { opacity: 0; transform: rotate(-18deg) scale(.88); } }
+    @keyframes fill { from { transform: scaleX(0); } }
+    @keyframes drawer { from { transform: translateX(100%); } }
+
+    @media (max-width: 1040px) {
+      .rail { width: 80px; padding: 27px 13px; }
+      .brand { flex-direction: column; font-size: 15px; }
+      .brand span:last-child { margin: 2px 0 0; }
+      .subtitle, .rail-art, .status-box strong, .status-box small, .status-line span { display: none; }
+      .status-box { display: grid; place-items: center; }
+      .app { margin-left: 80px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .codes { grid-template-columns: minmax(0, 620px); }
+    }
+    @media (max-width: 720px) {
+      .rail { display: none; }
+      .app { margin-left: 0; }
+      .topbar { position: relative; flex-direction: column-reverse; align-items: stretch; padding: 10px 14px 0; }
+      nav { min-height: 46px; justify-content: space-between; gap: 8px; }
+      .auto-chip { align-self: flex-end; }
+      .content { padding: 20px 14px 30px; }
+      .heading { align-items: stretch; flex-direction: column; gap: 14px; }
+      .search { width: 100%; }
+      .hero { grid-template-columns: 1fr; }
+      .metrics, .codes { grid-template-columns: 1fr; }
+      th:nth-child(3), td:nth-child(3) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <aside class="rail">
+    <div>
+      <a class="brand" href="#" aria-label="Ranked Codes home"><span>RANKED</span><span>CODES</span></a>
+      <p class="subtitle">Competitive lobby tracking.</p>
+    </div>
+    <div class="rail-art" aria-hidden="true"><i class="ring one"></i><i class="ring two"></i></div>
+    <section class="status-box">
+      <div class="status-line"><i class="dot" id="statusDot"></i><span>LOBBY STATUS</span></div>
+      <strong id="collectorText">Collector waiting</strong>
+      <small id="collectorSubtext">Connect the PC collector</small>
+    </section>
+  </aside>
+
+  <main class="app">
+    <header class="topbar">
+      <nav aria-label="Primary navigation">
+        <button class="nav active" data-view="Overview">Overview</button>
+        <button class="nav" data-view="Codes">Codes</button>
+        <button class="nav" data-view="Players">Players</button>
+        <button class="nav" data-view="Activity">Activity</button>
+      </nav>
+      <span class="auto-chip"><i class="dot" id="topStatusDot"></i>LIVE MATCH LINK</span>
+    </header>
+
+    <div class="content">
+      <div class="heading">
+        <div><p class="eyebrow" id="eyebrow">RANKED NETWORK / OVERVIEW</p><h1 id="title">Overview</h1></div>
+        <label class="search">⌕<input id="search" aria-label="Search players" placeholder="Search player, room, status"></label>
+      </div>
+      <div id="view"></div>
+    </div>
+  </main>
+
+  <div id="drawerRoot"></div>
+
+  <script>
+    const ENDPOINT = "http://127.0.0.1:8787";
+    const emptyData = {
+      connected: false,
+      serverOnline: false,
+      rooms: [],
+      players: [],
+      events: [],
+      metrics: { onlinePlayers: 0, activeCodes: 0, tagsToday: 0, avgRuntime: "0m" }
+    };
+
+    const blankData = () => JSON.parse(JSON.stringify(emptyData));
+    let data = blankData();
+    let activeView = "Overview";
+    let query = "";
+    let renderedMarkup = "";
+    let refreshInFlight = false;
+
+    const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+    })[char]);
+
+    function formatRuntime(seconds) {
+      const minutes = Math.max(0, Math.floor(Number(seconds || 0) / 60));
+      return minutes < 60 ? `${minutes}m` : `${Math.floor(minutes / 60)}h ${minutes % 60}m`;
+    }
+
+    function relativeTime(value) {
+      const time = Date.parse(value);
+      if (!Number.isFinite(time)) return value;
+      const seconds = Math.max(0, Math.floor((Date.now() - time) / 1000));
+      if (seconds < 60) return `${seconds}s ago`;
+      if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+      return `${Math.floor(seconds / 3600)}h ago`;
+    }
+
+    function filteredPlayers() {
+      const needle = query.trim().toLowerCase();
+      return data.players.filter(player =>
+        `${player.name} ${player.room} ${player.status}`.toLowerCase().includes(needle)
+      );
+    }
+
+    function playerTable(players) {
+      const rows = players.map((player, index) => `
+        <tr data-player="${index}" tabindex="0">
+          <td><strong>${escapeHtml(player.name)}</strong></td>
+          <td class="code">${escapeHtml(player.room)}</td>
+          <td><span class="state ${player.status.toLowerCase()}">${escapeHtml(player.status)}</span></td>
+          <td>${escapeHtml(player.runtime)}</td>
+          <td>${Number(player.tags)}</td>
+        </tr>`).join("");
+      return `
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Player</th><th>Room</th><th>Status</th><th>Observed runtime</th><th>Tags</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+          ${rows ? "" : '<div class="empty">No players yet. Launch Gorilla Tag and join a code.</div>'}
+        </div>`;
+    }
+
+    function overview() {
+      const room = data.rooms[0] || {
+        id: 0, code: "NO ROOM", map: "GORILLA TAG",
+        capacity: 10, activePlayers: 0, tags: 0
+      };
+      const percent = Math.min(100, Math.round(room.activePlayers / room.capacity * 100));
+      const roomAction = data.rooms.length
+        ? `<button class="copy" data-copy="${escapeHtml(room.code)}">COPY CODE</button>`
+        : '<span class="section-label">JOIN A CODE</span>';
+      return `
+        <div class="view">
+          <section class="hero">
+            <article class="panel room">
+              <div class="room-top"><p class="section-label">CURRENT ROOM</p>${roomAction}</div>
+              ${data.rooms.length
+                ? `<button class="room-code" data-copy="${escapeHtml(room.code)}">${escapeHtml(room.code)}</button>`
+                : `<div class="room-code">${escapeHtml(room.code)}</div>`}
+              <div class="room-count"><strong>${room.activePlayers} / ${room.capacity}</strong><span>players</span></div>
+            </article>
+            <article class="panel occupancy">
+              <p class="section-label">ROOM OCCUPANCY · ${percent}% FULL</p>
+              <div class="occupancy-wrap"><div class="circle" style="--percent:${percent}%"><div><strong>${room.activePlayers}/${room.capacity}</strong><small>PLAYERS</small></div></div></div>
+            </article>
+          </section>
+          <section class="metrics">
+            <article class="panel metric"><p>Online players</p><strong>${data.metrics.onlinePlayers}</strong></article>
+            <article class="panel metric"><p>Active codes</p><strong>${data.metrics.activeCodes}</strong></article>
+            <article class="panel metric"><p>Tags today</p><strong>${data.metrics.tagsToday}</strong></article>
+            <article class="panel metric"><p>Avg runtime</p><strong>${escapeHtml(data.metrics.avgRuntime)}</strong></article>
+          </section>
+          <section class="panel table-panel">
+            <div class="table-head"><div><p class="section-label">RECENT PLAYERS</p><small>Live and recently observed sessions</small></div></div>
+            ${playerTable(filteredPlayers())}
+          </section>
+        </div>`;
+    }
+
+    function codes() {
+      const currentRoom = data.rooms.slice(0, 1);
+      if (!currentRoom.length) {
+        return `<section class="view codes"><article class="panel code-card">
+          <p class="section-label">CURRENT LOBBY</p>
+          <h2>NO ACTIVE CODE</h2>
+          <p>Launch Gorilla Tag with the Ranked Codes mod installed, then join a lobby. This page will update automatically.</p>
+        </article></section>`;
+      }
+      return `<section class="view codes">${currentRoom.map(room => {
+        const percent = Math.min(100, Math.round(room.activePlayers / room.capacity * 100));
+        return `<article class="panel code-card">
+          <p class="section-label">${escapeHtml(room.map).toUpperCase()} · CURRENT LOBBY</p>
+          <h2>${escapeHtml(room.code)}</h2>
+          <div class="meter"><i style="--fill:${percent}%"></i></div>
+          <div class="code-stats"><span>PLAYERS<strong>${room.activePlayers} / ${room.capacity}</strong></span><span>TAGS<strong>${room.tags}</strong></span></div>
+          <button class="copy" data-copy="${escapeHtml(room.code)}">COPY ROOM CODE</button>
+        </article>`;
+      }).join("")}</section>`;
+    }
+
+    function players() {
+      return `<section class="view panel table-panel">
+        <div class="table-head"><div><p class="section-label">ALL PLAYER SESSIONS</p><small>Observed runtime and tag totals for every player</small></div></div>
+        ${playerTable(filteredPlayers())}
+      </section>`;
+    }
+
+    function activity() {
+      return `<section class="view activity">
+        <article class="panel feed"><p class="section-label">EVENT STREAM</p><ol>${data.events.map(event => `
+          <li><span class="event">${escapeHtml(event.type).slice(0,1).toUpperCase()}</span>
+          <div><strong>${escapeHtml(event.detail)}</strong><p>${escapeHtml(event.playerName)} in ${escapeHtml(event.room)}</p></div>
+          <time data-event-time="${escapeHtml(event.createdAt)}"></time></li>`).join("")}</ol></article>
+      </section>`;
+    }
+
+    function bindInteractions() {
+      document.querySelectorAll("[data-copy]").forEach(button => {
+        button.addEventListener("click", async () => {
+          await navigator.clipboard?.writeText(button.dataset.copy);
+          const old = button.textContent;
+          button.textContent = "COPIED";
+          button.classList.add("copied");
+          setTimeout(() => {
+            button.textContent = old;
+            button.classList.remove("copied");
+          }, 1200);
+        });
+      });
+      document.querySelectorAll("tr[data-player]").forEach(row => {
+        const open = () => showPlayer(filteredPlayers()[Number(row.dataset.player)]);
+        row.addEventListener("click", open);
+        row.addEventListener("keydown", event => event.key === "Enter" && open());
+      });
+    }
+
+    function showPlayer(player) {
+      if (!player) return;
+      document.getElementById("drawerRoot").innerHTML = `
+        <button class="drawer-backdrop" aria-label="Close player details"></button>
+        <aside class="drawer"><button aria-label="Close player details">×</button>
+          <p class="eyebrow">PLAYER SESSION</p><h2>${escapeHtml(player.name)}</h2>
+          <div class="drawer-grid">
+            <div><span>ROOM</span><strong>${escapeHtml(player.room)}</strong></div>
+            <div><span>STATUS</span><strong>${escapeHtml(player.status)}</strong></div>
+            <div><span>OBSERVED RUNTIME</span><strong>${escapeHtml(player.runtime)}</strong></div>
+            <div><span>TAGS</span><strong>${Number(player.tags)}</strong></div>
+          </div>
+        </aside>`;
+      document.querySelectorAll(".drawer button, .drawer-backdrop").forEach(button =>
+        button.addEventListener("click", () => document.getElementById("drawerRoot").innerHTML = "")
+      );
+    }
+
+    function updateRelativeTimes() {
+      document.querySelectorAll("[data-event-time]").forEach(element => {
+        element.textContent = relativeTime(element.dataset.eventTime);
+      });
+    }
+
+    function render(animate = false) {
+      document.getElementById("title").textContent = activeView;
+      document.getElementById("eyebrow").textContent =
+        `RANKED NETWORK / ${activeView.toUpperCase()}`;
+      document.querySelectorAll(".nav").forEach(button =>
+        button.classList.toggle("active", button.dataset.view === activeView)
+      );
+      const nextMarkup =
+        activeView === "Overview" ? overview() :
+        activeView === "Codes" ? codes() :
+        activeView === "Players" ? players() : activity();
+
+      if (nextMarkup === renderedMarkup) {
+        updateRelativeTimes();
+        return;
+      }
+
+      const viewRoot = document.getElementById("view");
+      viewRoot.innerHTML = nextMarkup;
+      renderedMarkup = nextMarkup;
+
+      if (!animate) {
+        viewRoot.querySelectorAll(".view, .circle, .meter i").forEach(element => {
+          element.style.animation = "none";
+        });
+        viewRoot.querySelectorAll(".metric strong, .room-count strong, .circle strong, .code-stats strong").forEach(element => {
+          if (typeof element.animate === "function") {
+            element.animate(
+              [
+                { transform: "translateY(5px) scale(.96)", opacity: .5, color: "var(--green)" },
+                { transform: "translateY(0) scale(1)", opacity: 1 }
+              ],
+              { duration: 360, easing: "cubic-bezier(.22,1,.36,1)" }
+            );
+          }
+        });
+      } else {
+        viewRoot.querySelectorAll(".panel").forEach((element, index) => {
+          if (typeof element.animate === "function") {
+            element.animate(
+              [
+                { transform: "translateY(12px)", opacity: 0 },
+                { transform: "translateY(0)", opacity: 1 }
+              ],
+              {
+                duration: 430,
+                delay: Math.min(index * 45, 225),
+                easing: "cubic-bezier(.22,1,.36,1)",
+                fill: "both"
+              }
+            );
+          }
+        });
+        viewRoot.querySelectorAll("tr[data-player], .feed li, .metric").forEach((element, index) => {
+          if (typeof element.animate === "function") {
+            element.animate(
+              [
+                { transform: "translateX(-12px)", opacity: 0 },
+                { transform: "translateX(0)", opacity: 1 }
+              ],
+              {
+                duration: 380,
+                delay: 110 + Math.min(index * 38, 380),
+                easing: "cubic-bezier(.22,1,.36,1)",
+                fill: "both"
+              }
+            );
+          }
+        });
+      }
+
+      bindInteractions();
+      updateRelativeTimes();
+    }
+
+    async function refresh() {
+      if (refreshInFlight) return;
+      refreshInFlight = true;
+
+      try {
+        const response = await fetch(`${ENDPOINT}/api/dashboard?time=${Date.now()}`, { cache: "no-store" });
+        if (!response.ok) throw new Error(`Local collector returned ${response.status}`);
+        const payload = await response.json();
+        data = {
+          connected: Boolean(payload.collector?.connected),
+          serverOnline: true,
+          rooms: (payload.rooms || []).slice(0, 1).map(room => ({
+            id: room.id, code: room.code, map: room.map, capacity: Number(room.capacity),
+            activePlayers: Number(room.active_players), tags: Number(room.tags)
+          })),
+          players: (payload.players || []).map(player => ({
+            name: player.display_name, room: player.room, status: player.status,
+            runtime: formatRuntime(player.runtime_seconds), tags: Number(player.tag_count)
+          })),
+          events: (payload.events || []).map(event => ({
+            id: event.id, type: event.type, detail: event.detail, playerName: event.display_name,
+            room: event.room, createdAt: event.created_at
+          })),
+          metrics: {
+            onlinePlayers: Number(payload.metrics?.online_players || 0),
+            activeCodes: Math.min(1, Number(payload.metrics?.active_codes || 0)),
+            tagsToday: Number(payload.metrics?.tags_today || 0),
+            avgRuntime: formatRuntime(payload.metrics?.avg_runtime_seconds)
+          }
+        };
+        document.getElementById("statusDot").classList.toggle("live", data.connected);
+        document.getElementById("topStatusDot").classList.toggle("live", data.connected);
+        document.getElementById("collectorText").textContent =
+          data.connected ? "Live room connected" : "Mod connected";
+        document.getElementById("collectorSubtext").textContent =
+          data.connected && data.rooms.length
+            ? `Showing ${data.rooms[0].code} · ${data.metrics.onlinePlayers} players`
+            : "Join a Gorilla Tag code";
+        render(false);
+      } catch (_) {
+        data = blankData();
+        document.getElementById("statusDot").classList.remove("live");
+        document.getElementById("topStatusDot").classList.remove("live");
+        document.getElementById("collectorText").textContent = "Mod not detected";
+        document.getElementById("collectorSubtext").textContent =
+          "Launch Gorilla Tag with the plugin";
+        render(false);
+      } finally {
+        refreshInFlight = false;
+      }
+    }
+
+    document.querySelectorAll(".nav").forEach(button => button.addEventListener("click", () => {
+      activeView = button.dataset.view;
+      render(true);
+    }));
+    document.getElementById("search").addEventListener("input", event => {
+      query = event.target.value;
+      render(false);
+    });
+
+    let pointerFrame = 0;
+    document.addEventListener("pointermove", event => {
+      if (pointerFrame) return;
+      pointerFrame = requestAnimationFrame(() => {
+        document.documentElement.style.setProperty("--mouse-x", `${event.clientX}px`);
+        document.documentElement.style.setProperty("--mouse-y", `${event.clientY}px`);
+        pointerFrame = 0;
+      });
+    });
+
+    render(true);
+    refresh();
+    setInterval(refresh, 1000);
+  </script>
+</body>
+</html>
