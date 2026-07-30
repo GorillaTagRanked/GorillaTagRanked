@@ -1,11 +1,11 @@
-<!-- Ranked Codes Grey Edition -->
+<!-- Ranked Codes Automated Elo v3 -->
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0d0f10">
-  <title>Ranked Codes — Live Gorilla Tag Lobby</title>
+  <title>Ranked Codes — Automated Elo v3</title>
   <style>
     :root {
       --bg: #0d0f10;
@@ -416,39 +416,19 @@
       font: 800 11px ui-monospace, SFMono-Regular, Consolas, monospace;
     }
 
-    .rankings-layout { display: grid; grid-template-columns: minmax(0, 1fr) 330px; align-items: start; gap: 13px; }
+    .rankings-layout { display: block; }
     .rankings-layout .table-panel { margin-top: 0; }
-    .result-panel { padding: 22px; }
-    .result-panel h2 { margin: 8px 0 8px; font-size: 25px; letter-spacing: -.035em; }
-    .result-panel > p:not(.section-label) { margin: 0 0 20px; color: var(--muted); line-height: 1.55; }
-    .result-field { display: block; margin-top: 13px; color: var(--faint); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; letter-spacing: .08em; }
-    .result-field select {
-      width: 100%;
-      height: 42px;
-      margin-top: 7px;
+    .rank-strip {
+      display: grid;
+      grid-template-columns: repeat(8, minmax(90px, 1fr));
+      gap: 1px;
+      margin-top: 13px;
+      overflow-x: auto;
       border: 1px solid var(--border);
-      border-radius: 4px;
-      outline: 0;
-      background: var(--panel-2);
-      padding: 0 11px;
-      color: var(--text);
-      font: 600 12px Inter, ui-sans-serif, system-ui, sans-serif;
+      background: var(--border);
     }
-    .result-field select:focus { border-color: rgba(197,203,209,.52); box-shadow: 0 0 0 3px rgba(197,203,209,.07); }
-    .record-result {
-      width: 100%;
-      min-height: 42px;
-      margin-top: 16px;
-      border: 1px solid var(--accent);
-      border-radius: 4px;
-      background: var(--accent);
-      color: #101214;
-      font: 800 10px ui-monospace, SFMono-Regular, Consolas, monospace;
-      letter-spacing: .08em;
-      cursor: pointer;
-    }
-    .record-result:disabled { opacity: .45; cursor: wait; }
-    .result-notice { min-height: 19px; margin: 12px 0 0 !important; color: var(--accent) !important; font-size: 12px; }
+    .rank-strip span { min-width: 90px; background: var(--panel-2); padding: 12px; color: var(--faint); font: 700 9px ui-monospace, SFMono-Regular, Consolas, monospace; }
+    .rank-strip strong { display: block; margin-top: 5px; color: var(--text); font-size: 11px; }
 
     .codes { display: grid; grid-template-columns: minmax(0, 620px); gap: 13px; }
     .code-card { min-height: 270px; padding: 22px; }
@@ -540,7 +520,6 @@
       .app { margin-left: 80px; }
       .metrics { grid-template-columns: repeat(2, 1fr); }
       .codes { grid-template-columns: minmax(0, 620px); }
-      .rankings-layout { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
       .rail { display: none; }
@@ -563,7 +542,7 @@
   <aside class="rail">
     <div>
       <a class="brand" href="#" aria-label="Ranked Codes home"><span>RANKED</span><span>CODES</span></a>
-      <p class="subtitle">Competitive lobby tracking.</p>
+      <p class="subtitle">Automated Elo · Grey Edition</p>
     </div>
     <div class="rail-art" aria-hidden="true"><i class="ring one"></i><i class="ring two"></i></div>
     <section class="status-box">
@@ -604,7 +583,7 @@
       players: [],
       rankings: [],
       events: [],
-      metrics: { onlinePlayers: 0, activeCodes: 0, tagsToday: 0, avgRuntime: "0m" }
+      metrics: { onlinePlayers: 0, activeCodes: 0, tagsToday: 0, avgRuntime: "0m", ratedRounds: 0, roundActive: false }
     };
 
     const blankData = () => JSON.parse(JSON.stringify(emptyData));
@@ -613,7 +592,6 @@
     let query = "";
     let renderedMarkup = "";
     let refreshInFlight = false;
-    let resultNotice = "";
 
     const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
@@ -636,14 +614,14 @@
     function filteredPlayers() {
       const needle = query.trim().toLowerCase();
       return data.players.filter(player =>
-        `${player.name} ${player.room} ${player.status} ${player.elo}`.toLowerCase().includes(needle)
+        `${player.name} ${player.room} ${player.status} ${player.rank} ${player.elo}`.toLowerCase().includes(needle)
       );
     }
 
     function filteredRankings() {
       const needle = query.trim().toLowerCase();
       return data.rankings.filter(player =>
-        `${player.name} ${player.aliases.join(" ")} ${player.elo} ${player.wins} ${player.losses}`
+        `${player.name} ${player.aliases.join(" ")} ${player.rank} ${player.elo} ${player.totalTags} ${player.bestSurvival}`
           .toLowerCase()
           .includes(needle)
       );
@@ -655,14 +633,15 @@
           <td><strong>${escapeHtml(player.name)}</strong></td>
           <td class="code">${escapeHtml(player.room)}</td>
           <td><span class="state ${player.status.toLowerCase()}">${escapeHtml(player.status)}</span></td>
+          <td>${escapeHtml(player.rank)}</td>
           <td><span class="elo-pill">${Number(player.elo)}</span></td>
           <td>${escapeHtml(player.runtime)}</td>
-          <td>${Number(player.tags)}</td>
+          <td>${Number(player.roundTags)}</td>
         </tr>`).join("");
       return `
         <div class="table-scroll">
           <table class="player-table">
-            <thead><tr><th>Player</th><th>Room</th><th>Status</th><th>Elo</th><th>Observed runtime</th><th>Tags</th></tr></thead>
+            <thead><tr><th>Player</th><th>Room</th><th>Status</th><th>Tier</th><th>Elo</th><th>Observed runtime</th><th>Round tags</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
           ${rows ? "" : '<div class="empty">No players yet. Launch Gorilla Tag and join a code.</div>'}
@@ -696,8 +675,8 @@
           <section class="metrics">
             <article class="panel metric"><p>Online players</p><strong>${data.metrics.onlinePlayers}</strong></article>
             <article class="panel metric"><p>Active codes</p><strong>${data.metrics.activeCodes}</strong></article>
-            <article class="panel metric"><p>Tags today</p><strong>${data.metrics.tagsToday}</strong></article>
-            <article class="panel metric"><p>Avg runtime</p><strong>${escapeHtml(data.metrics.avgRuntime)}</strong></article>
+            <article class="panel metric"><p>Rated rounds</p><strong>${data.metrics.ratedRounds}</strong></article>
+            <article class="panel metric"><p>Credited tags</p><strong>${data.metrics.tagsToday}</strong></article>
           </section>
           <section class="panel table-panel">
             <div class="table-head"><div><p class="section-label">RECENT PLAYERS</p><small>Live and recently observed sessions</small></div></div>
@@ -736,13 +715,17 @@
 
     function rankingTable(players) {
       const rows = players.map(player => {
-        const rank = data.rankings.findIndex(item => item.id === player.id) + 1;
+        const position = data.rankings.findIndex(item => item.id === player.id) + 1;
+        const change = Number(player.lastChange);
         return `
           <tr data-ranking="${escapeHtml(player.id)}" tabindex="0">
-            <td class="code">#${rank}</td>
+            <td class="code">#${position}</td>
             <td><strong>${escapeHtml(player.name)}</strong></td>
+            <td>${escapeHtml(player.rank)}</td>
             <td><span class="elo-pill">${Number(player.elo)}</span></td>
-            <td>${Number(player.wins)}–${Number(player.losses)}</td>
+            <td>${change > 0 ? "+" : ""}${change}</td>
+            <td>${Number(player.totalTags)}</td>
+            <td>${Number(player.bestSurvival)}s</td>
             <td>${Number(player.games)}</td>
             <td><time data-event-time="${escapeHtml(player.lastSeen)}"></time></td>
           </tr>`;
@@ -751,7 +734,7 @@
       return `
         <div class="table-scroll">
           <table>
-            <thead><tr><th>Rank</th><th>Player</th><th>Elo</th><th>Record</th><th>Games</th><th>Last seen</th></tr></thead>
+            <thead><tr><th>#</th><th>Player</th><th>Tier</th><th>Elo</th><th>Last change</th><th>Tags</th><th>Best survival</th><th>Rounds</th><th>Last seen</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>
           ${rows ? "" : '<div class="empty">No saved players match that search.</div>'}
@@ -759,29 +742,17 @@
     }
 
     function rankings() {
-      const options = data.rankings.map(player =>
-        `<option value="${escapeHtml(player.id)}">${escapeHtml(player.name)} · ${Number(player.elo)} Elo</option>`
-      ).join("");
-      const canRecord = data.rankings.length >= 2;
-
       return `<section class="view rankings-layout">
         <article class="panel table-panel">
-          <div class="table-head"><div><p class="section-label">ELO RANKINGS</p><small>Saved by stable player ID, including previous names</small></div></div>
+          <div class="table-head"><div><p class="section-label">AUTOMATED ELO RANKINGS</p><small>Longer survival and up to three credited tags improve each round. Gains shrink sharply near the 3000 cap.</small></div></div>
           ${rankingTable(filteredRankings())}
         </article>
-        <aside class="panel result-panel">
-          <p class="section-label">RANKED RESULT</p>
-          <h2>Record a result</h2>
-          <p>Select the winner and loser. Ratings use standard K-32 Elo and every result is protected from accidental duplicate submission.</p>
-          <label class="result-field">WINNER
-            <select id="winnerSelect" ${canRecord ? "" : "disabled"}><option value="">Choose winner</option>${options}</select>
-          </label>
-          <label class="result-field">LOSER
-            <select id="loserSelect" ${canRecord ? "" : "disabled"}><option value="">Choose loser</option>${options}</select>
-          </label>
-          <button class="record-result" id="recordResult" ${canRecord ? "" : "disabled"}>RECORD RESULT</button>
-          <p class="result-notice" id="resultNotice">${escapeHtml(resultNotice)}</p>
-        </aside>
+        <div class="rank-strip" aria-label="Rank thresholds">
+          <span>BRONZE<strong>1000</strong></span><span>SILVER<strong>1300</strong></span>
+          <span>GOLD<strong>1600</strong></span><span>PLATINUM<strong>1900</strong></span>
+          <span>DIAMOND<strong>2200</strong></span><span>MASTER<strong>2500</strong></span>
+          <span>GRANDMASTER<strong>2750</strong></span><span>APEX<strong>2950</strong></span>
+        </div>
       </section>`;
     }
 
@@ -819,68 +790,6 @@
         row.addEventListener("click", open);
         row.addEventListener("keydown", event => event.key === "Enter" && open());
       });
-      document.getElementById("recordResult")?.addEventListener("click", recordEloResult);
-    }
-
-    async function recordEloResult() {
-      const button = document.getElementById("recordResult");
-      const winnerId = document.getElementById("winnerSelect")?.value || "";
-      const loserId = document.getElementById("loserSelect")?.value || "";
-
-      if (!winnerId || !loserId) {
-        resultNotice = "Choose both players.";
-        document.getElementById("resultNotice").textContent = resultNotice;
-        return;
-      }
-      if (winnerId === loserId) {
-        resultNotice = "The winner and loser must be different.";
-        document.getElementById("resultNotice").textContent = resultNotice;
-        return;
-      }
-
-      button.disabled = true;
-      button.textContent = "SAVING RESULT…";
-      const uniquePart = globalThis.crypto?.randomUUID?.() ||
-        `${Math.random().toString(36).slice(2)}-${Date.now()}`;
-      const resultId = `${Date.now()}-${uniquePart}`;
-
-      try {
-        const url = `${ENDPOINT}/api/elo/result?winner_id=${encodeURIComponent(winnerId)}&loser_id=${encodeURIComponent(loserId)}&result_id=${encodeURIComponent(resultId)}`;
-        const response = await fetch(url, { method: "POST", cache: "no-store" });
-        const payload = await response.json();
-        if (!response.ok || !payload.ok) {
-          throw new Error(payload.error || `Could not save result (${response.status})`);
-        }
-
-        if (payload.duplicate) {
-          resultNotice = "That result was already recorded.";
-        } else {
-          const winner = data.rankings.find(player => player.id === winnerId);
-          const loser = data.rankings.find(player => player.id === loserId);
-          if (winner) {
-            winner.elo = Number(payload.winner.elo);
-            winner.wins++;
-            winner.games++;
-          }
-          if (loser) {
-            loser.elo = Number(payload.loser.elo);
-            loser.losses++;
-            loser.games++;
-          }
-          data.rankings.sort((left, right) =>
-            right.elo - left.elo || left.name.localeCompare(right.name)
-          );
-          resultNotice = `${payload.winner.display_name} gained ${Number(payload.change)} Elo.`;
-        }
-
-        renderedMarkup = "";
-        render(false);
-      } catch (error) {
-        resultNotice = error.message || "Could not record the result.";
-        document.getElementById("resultNotice").textContent = resultNotice;
-        button.disabled = false;
-        button.textContent = "RECORD RESULT";
-      }
     }
 
     function showPlayer(player) {
@@ -892,9 +801,10 @@
           <div class="drawer-grid">
             <div><span>ROOM</span><strong>${escapeHtml(player.room)}</strong></div>
             <div><span>STATUS</span><strong>${escapeHtml(player.status)}</strong></div>
+            <div><span>TIER</span><strong>${escapeHtml(player.rank)}</strong></div>
             <div><span>ELO</span><strong>${Number(player.elo)}</strong></div>
             <div><span>OBSERVED RUNTIME</span><strong>${escapeHtml(player.runtime)}</strong></div>
-            <div><span>TAGS</span><strong>${Number(player.tags)}</strong></div>
+            <div><span>ROUND TAGS</span><strong>${Number(player.roundTags)}</strong></div>
           </div>
         </aside>`;
       document.querySelectorAll(".drawer button, .drawer-backdrop").forEach(button =>
@@ -912,9 +822,12 @@
         <aside class="drawer"><button aria-label="Close ranking details">×</button>
           <p class="eyebrow">PERSISTENT RANKING</p><h2>${escapeHtml(player.name)}</h2>
           <div class="drawer-grid">
+            <div><span>TIER</span><strong>${escapeHtml(player.rank)}</strong></div>
             <div><span>ELO</span><strong>${Number(player.elo)}</strong></div>
-            <div><span>RECORD</span><strong>${Number(player.wins)}–${Number(player.losses)}</strong></div>
-            <div><span>GAMES</span><strong>${Number(player.games)}</strong></div>
+            <div><span>LAST CHANGE</span><strong>${player.lastChange > 0 ? "+" : ""}${Number(player.lastChange)}</strong></div>
+            <div><span>ROUNDS</span><strong>${Number(player.games)}</strong></div>
+            <div><span>TOTAL TAGS</span><strong>${Number(player.totalTags)}</strong></div>
+            <div><span>BEST SURVIVAL</span><strong>${Number(player.bestSurvival)}s</strong></div>
             <div><span>LAST SEEN</span><strong>${escapeHtml(relativeTime(player.lastSeen))}</strong></div>
           </div>
           <p class="section-label" style="margin-top:24px">KNOWN NAMES</p>
@@ -1024,14 +937,19 @@
           })),
           players: (payload.players || []).map(player => ({
             id: player.player_id, name: player.display_name, room: player.room, status: player.status,
-            elo: Number(player.elo ?? 1000), runtime: formatRuntime(player.runtime_seconds),
-            tags: Number(player.tag_count)
+            rank: player.rank || "Bronze", elo: Number(player.elo ?? 1000),
+            runtime: formatRuntime(player.runtime_seconds), tags: Number(player.tag_count),
+            roundTags: Number(player.round_tags || 0)
           })),
           rankings: (payload.rankings || []).map(player => ({
             id: player.player_id, name: player.display_name,
             aliases: Array.isArray(player.aliases) ? player.aliases.map(String) : [],
             elo: Number(player.elo ?? 1000), wins: Number(player.wins || 0),
             losses: Number(player.losses || 0), games: Number(player.games || 0),
+            totalTags: Number(player.total_tags || 0),
+            bestSurvival: Number(player.best_survival_seconds || 0),
+            lastChange: Number(player.last_elo_change || 0),
+            rank: player.rank || "Bronze",
             lastSeen: player.last_seen_at
           })),
           events: (payload.events || []).map(event => ({
@@ -1042,7 +960,9 @@
             onlinePlayers: Number(payload.metrics?.online_players || 0),
             activeCodes: Math.min(1, Number(payload.metrics?.active_codes || 0)),
             tagsToday: Number(payload.metrics?.tags_today || 0),
-            avgRuntime: formatRuntime(payload.metrics?.avg_runtime_seconds)
+            avgRuntime: formatRuntime(payload.metrics?.avg_runtime_seconds),
+            ratedRounds: Number(payload.metrics?.rated_rounds || 0),
+            roundActive: Boolean(payload.metrics?.round_active)
           }
         };
         document.getElementById("statusDot").classList.toggle("live", data.connected);
